@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postos de Saúde em Campinas - Vacinaê</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f5e8, #e3f2fd);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .map-icon {
+            font-size: 2rem;
+            margin: 15px 0;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #2e7d32;
+            font-size: 1.3rem;
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+        }
+
+        .info-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .item-icon {
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .postos-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .regiao-group {
+            margin-bottom: 30px;
+        }
+
+        .regiao-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2e7d32;
+        }
+
+        .regiao-icon {
+            font-size: 1.5rem;
+        }
+
+        .regiao-title {
+            font-size: 1.4rem;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .posto-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .posto-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #4caf50;
+        }
+
+        .posto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 15px;
+        }
+
+        .posto-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1b5e20;
+            flex: 1;
+        }
+
+        .regiao-badge {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .posto-details {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .detail-icon {
+            font-size: 1rem;
+            margin-top: 2px;
+            min-width: 20px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+            min-width: 80px;
+        }
+
+        .horario-info {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+        }
+
+        .more-info {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .more-info h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .link-button {
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+
+        .link-button:hover {
+            background: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .info-items {
+                grid-template-columns: 1fr;
+            }
+            
+            .posto-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .detail-label {
+                min-width: auto;
+            }
+        }
+
+        .destaque {
+            border-left: 4px solid #ff9800;
+            background: #fff8e1;
+        }
+
+        .telefone {
+            color: #1976d2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Postos de Saúde em Campinas</h1>
+            <p>Onde se vacinar gratuitamente no SUS</p>
+            <div class="map-icon">🗺️</div>
+        </div>
+
+        <div class="content">
+            <!-- INFORMAÇÕES GERAIS -->
+            <div class="info-box">
+                <div class="info-title">
+                    <span class="info-icon">💡</span>
+                    <h3>Informações Importantes</h3>
+                </div>
+                <div class="info-items">
+                    <div class="info-item">
+                        <span class="item-icon">⏰</span>
+                        <div>
+                            <strong>Horários:</strong><br>
+                            Segunda a sexta: 7h às 19h<br>
+                            <em>(varia por unidade)</em>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="item-icon">📋</span>
+                        <div>
+                            <strong>Documentos:</strong><br>
+                            RG ou certidão de nascimento<br>
+                            Cartão do SUS (pode fazer no local)
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="item-icon">✅</span>
+                        <div>
+                            <strong>Vacinação:</strong><br>
+                            Não precisa agendamento<br>
+                            Adolescentes podem ir sozinhos
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="item-icon">💰</span>
+                        <div>
+                            <strong>Gratuidade:</strong><br>
+                            Todas as vacinas são 100% gratuitas<br>
+                            Cartão SUS obrigatório
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POSTOS POR REGIÃO -->
+            <div class="postos-grid">
+                <!-- REGIÃO CENTRAL -->
+                <div class="regiao-group">
+                    <div class="regiao-header">
+                        <span class="regiao-icon">🏙️</span>
+                        <h2 class="regiao-title">Região Central</h2>
+                    </div>
+
+                    <div class="posto-card destaque">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Mário de Campos Bueno Júnior</span>
+                            <span class="regiao-badge">Central</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Padre Vieira, 1145 - Centro, Campinas - SP, 13015-301</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3231-9016</span>
+                            </div>
+                            <div class="horario-info">
+                                <strong>⏰ Horário de vacinação:</strong> Segunda a sexta, 8h às 16h
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REGIÃO LESTE -->
+                <div class="regiao-group">
+                    <div class="regiao-header">
+                        <span class="regiao-icon">🏘️</span>
+                        <h2 class="regiao-title">Região Leste</h2>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Parque São Quirino</span>
+                            <span class="regiao-badge">Leste</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Avenida Diogo Álvares, 1450 - Parque São Quirino, Campinas - SP, 13088-221</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3735-9126</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DISTRITO DE CAMPO GRANDE -->
+                <div class="regiao-group">
+                    <div class="regiao-header">
+                        <span class="regiao-icon">🏡</span>
+                        <h2 class="regiao-title">Distrito de Campo Grande</h2>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Jardim Florence</span>
+                            <span class="regiao-badge">Campo Grande</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Oswaldo Peralva, s/n - Jardim Florence, Campinas - SP, 13059-067</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3261-2462</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Parque Itajaí</span>
+                            <span class="regiao-badge">Campo Grande</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Paulo Gliwkoff, 160 - Conj. Hab. Parque Itajaí, Campinas - SP, 13086-023</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3735-9335</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Vila Castelo Branco</span>
+                            <span class="regiao-badge">Campo Grande</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Zocca, 161 - Vila Castelo Branco, Campinas - SP, 13061-231</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3229-9868</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REGIÃO NORTE -->
+                <div class="regiao-group">
+                    <div class="regiao-header">
+                        <span class="regiao-icon">🏢</span>
+                        <h2 class="regiao-title">Região Norte</h2>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Jardim Aurélia</span>
+                            <span class="regiao-badge">Norte</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Dona Licínia Teixeira de Sousa, 331 - Vila Proost de Souza, Campinas - SP, 13033-660</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3739-9122</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REGIÃO SUL -->
+                <div class="regiao-group">
+                    <div class="regiao-header">
+                        <span class="regiao-icon">🏬</span>
+                        <h2 class="regiao-title">Região Sul</h2>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Jardim São Vicente</span>
+                            <span class="regiao-badge">Sul</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Regina Nogueira, 1001 - Jardim São Gabriel, Campinas - SP, 13045-290</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Vila Rica</span>
+                            <span class="regiao-badge">Sul</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Manganês, 126 - Vila Rica, Campinas - SP, 13050-521</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3269-4475</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Jardim Guarani</span>
+                            <span class="regiao-badge">Sul</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Boaventura Lemos, 590 - Jardim Guarani, Campinas - SP, 13100-215</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-label">Telefone:</span>
+                                <span class="telefone">(19) 3252-7189</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="posto-card">
+                        <div class="posto-header">
+                            <span class="posto-name">UBS Jardim São Domingos</span>
+                            <span class="regiao-badge">Sul</span>
+                        </div>
+                        <div class="posto-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Endereço:</span>
+                                <span>Rua Juvenal de Oliveira, s/n - Jardim São Domingos, Campinas - SP, 13053-316</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIS INFORMAÇÕES -->
+            <div class="more-info">
+                <h3>🌐 Encontre Mais Postos e Informações Atualizadas</h3>
+                <p>Para a lista completa de postos de saúde em Campinas com informações atualizadas, acesse:</p>
+                
+                <a href="https://saude.campinas.sp.gov.br/rel_gestao/Rede_Fisica_Prestadora_SUS.pdf" 
+                   class="link-button" target="_blank">
+                   📋 Lista Oficial da Prefeitura
+                </a>
+                
+                <a href="https://campinas.sp.gov.br/sites/vacina/inicio" 
+                   class="link-button" target="_blank">
+                   💻 Site Oficial de Vacinação
+                </a>
+
+                <a href="https://campinas.sp.gov.br/servico/encontrar-o-centro-de-saude-por-endereco" 
+                   class="link-button" target="_blank">
+                   🗺️ Encontrar Posto por Endereço
+                </a>
+                
+                <div style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+                    <p><strong>📞 Disque Saúde:</strong> 160</p>
+                    <p><strong>📱 Aplicativo:</strong> "Campinas Saúde" disponível nas lojas</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💙 <strong>Projeto Vacinaê</strong> - ETEC Bento Quirino - 2025</p>
+            <p>Fonte: Prefeitura Municipal de Campinas - Rede Física Prestadora SUS (2023)</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #888;">
+                ✅ Todas as vacinas são gratuitas no SUS • ✅ Não precisa agendamento • ✅ Adolescentes podem ir sozinhos
+            </p>
+        </div>
+    </div>
+</body>
+</html>
